@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NGO</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/commonStyle.css">
+  <script src="js/ngoHomeService.js"></script>
+</head>
+
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="onPageload();">
+
+  <div class="container-fluid fixed-top py-3" style="background-color: #555;">
+    <div class="row collapse show no-gutters d-flex h-100 position-relative">
+      <div class="col-3 px-0 w-sidebar navbar-collapse collapse d-none d-md-flex">
+        <!-- spacer col -->
+      </div>
+      <div class="col px-3 px-md-0">
+        <!-- toggler -->
+        <a data-toggle="collapse" href="#" data-target=".collapse" role="button" class="text-white p-1">
+          <i class="fa fa-bars fa-lg"></i>
+        </a>
+      </div>
+      <div class="col px-3 px-md-0 donationCls">
+        <a style="text-decoration: none;font-size: 18px;" data-toggle="modal" data-target="#donationModelId"
+          class="text-white" href="#">Add Donation<i class="fa fa-plus"></i></i></a>
+      </div>
+      <div class="col px-3 px-md-0 campaignCls" ng-show="loginUserDetails.userType =='ADMIN'">
+        <a style="text-decoration: none;font-size: 18px;" data-toggle="modal" data-target="#campaignlId"
+          class="text-white" href="#">Add Campaign<i class="fa fa-plus"></i></i></a>
+      </div>
+      <div class="col px-3 px-md-0 participateCls">
+        <a style="text-decoration: none;font-size: 18px;" data-toggle="modal" data-target="#participatelId"
+          class="text-white" href="#">Participate As Volunteer<i class="fa fa-plus"></i></i></a>
+      </div>
+      <div class="col px-3 px-md-0 referCls" ng-show="loginUserDetails.userType =='ADMIN'">
+        <a style="text-decoration: none;font-size: 18px;" data-toggle="modal" data-target="#referModallId"
+          class="text-white" href="#">Add Fundraise <i class="fa fa-plus"></i></i></a>
+      </div>
+      <div>
+        <i class="fa fa-sign-out text-white" style="font-size: 20px;cursor: pointer;" ng-click="logout()">Logout</i>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid px-0">
+    <div class="row collapse show no-gutters d-flex h-100 position-relative">
+      <div class="col-3 p-0 h-100 navbar-collapse collapse d-none d-md-flex sidebar">
+        <!-- fixed sidebar -->
+        <div class="navbar-dark bg-themecolor text-white position-fixed h-100 align-self-start w-sidebar"
+          style="width: 200px;">
+          <img src="images/ngoImg4.jpg" style="height: 58px;width: 199px;">
+          <a data-toggle="collapse" class="px-1 d-inline d-md-none text-white" href="#" data-target=".collapse"><i
+              class="fa fa-bars"></i></a>
+          <ul class="nav flex-column flex-nowrap text-truncate">
+            <li class="nav-item">
+              <a class="active menu-active-cls" menuType="DONATION" href="#">Donation</a>
+            </li>
+            <li class="nav-item">
+              <a class="menu-active-cls" menuType="CAMPAIGN" href="#">Campaign</a>
+            </li>
+            <li class="nav-item">
+              <a class="menu-active-cls" menuType="PARTICIPATE" href="#">Volunteers</a>
+            </li>
+            <li class="nav-item">
+              <a class="menu-active-cls" menuType="REFER" href="#">Fundraising</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Donation Div -->
+      <div class="col-md-11 donationCls" style="margin-left: 200px; margin-top: 56px;" id="donationMainDiv">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Donor Name</th>
+              <th scope="col">Fundraising Name</th>
+              <th scope="col">Donation Date</th>
+              <th scope="col">Donation Amount</th>
+              <th scope="col">Current Amount</th>
+              <th scope="col">Target Amount</th>
+            </tr>
+          </thead>
+          <tbody id="donationBodyId">
+            <tr ng-repeat="data in viewDonationData">
+              <td scope="col">{{data.donorName}}</td>
+              <td scope="col">{{data.fundraisingDetails.fundraisingName}}</td>
+              <td scope="col">{{data.donationDate.split('T')[0]}}</td>
+              <td scope="col">{{data.donationAmmount}}</td>
+              <td scope="col">{{data.fundraisingDetails.currentAmmout}}</td>
+              <td scope="col">{{data.fundraisingDetails.targetAmmount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Campaign -->
+      <div class="col-md-11 campaignCls" style="margin-left: 200px; margin-top: 56px;" id="campaignMainDivId">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Campaign Title</th>
+              <th scope="col">Campaign Date</th>
+              <th scope="col">Sponsorship</th>
+              <th scope="col">Location</th>
+              <th scope="col">Campaign Details</th>
+            </tr>
+          </thead>
+          <tbody id="campaignBodyId">
+            <tr ng-repeat="data in campaignData">
+              <td scope="col">{{data.campaignTitle}}</td>
+              <td scope="col">{{data.campaignDate.split('T')[0]}}</td>
+              <td scope="col">{{data.sponsorship}}</td>
+              <td scope="col">{{data.location}}</td>
+              <td scope="col">{{data.campaignDetails}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Volunteers Div -->
+      <div class="col-md-11 participateCls" style="margin-left: 200px; margin-top: 56px;" id="participateMainDivId">
+        <div class="col-md-4 mb-3">
+          <label>Filter</label>
+          <select class="form-control" ng-change="filterData()" ng-model="seacrh">
+            <option value="">Select Campaign</option>
+            <option value="{{data.campaignTitle}}" ng-repeat="data in campaignData">
+              {{data.campaignTitle}}</option>
+          </select>
+        </div>
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Volunteer Name</th>
+              <th scope="col">Campaign Title</th>
+              <th scope="col">Contact</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Address</th>
+            </tr>
+          </thead>
+          <tbody id="participateBodyId">
+            <tr ng-repeat="data in volunteersFilterData">
+              <td scope="col">{{data.volunteerName}}</td>
+              <td scope="col">{{data.campaignDetails.campaignTitle}}</td>
+              <td scope="col">{{data.contact}}</td>
+              <td scope="col">{{data.gender}}</td>
+              <td scope="col">{{data.address}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- FUNDRAIS DIV -->
+      <div class="col-md-11 referCls" style="margin-left: 200px; margin-top: 56px;" id="referMainDivId">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Fundraise Name</th>
+              <th scope="col">Current Amount</th>
+              <th scope="col">Target Amount</th>
+              <th scope="col">Purpose</th>
+              <th ng-show="loginUserDetails.userType =='ADMIN'" scope="col">Edit</th>
+            </tr>
+          </thead>
+          <tbody id="referBodyId">
+            <tr ng-repeat="data in viewFundraisingData">
+              <td scope="col">{{data.fundraisingName}}</td>
+              <td scope="col">{{data.currentAmmout}}</td>
+              <td scope="col">{{data.targetAmmount}}</td>
+              <td scope="col">{{data.Purpose}}</td>
+              <td ng-show="loginUserDetails.userType =='ADMIN'" scope="col"><button type="button"
+                  class="border btn btn-primary" data-toggle="modal" data-target="#referModallId"
+                  ng-click="funraiseEdit(data)"><i class="fa fa-pencil" title="Edit"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Donation modal -->
+  <div class="modal fade" id="donationModelId">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header bg-themecolor">
+          <h4 class="modal-title">Add Donation</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="col-md-12 mb-3">
+                <label>Donor Name</label>
+                <input type="text" class="form-control" ng-model="donorDetails.donorName" id="donationAmmountId"
+                  placeholder="" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Fundraising Name</label>
+                <select id="paymentModeId" ng-options="data.fundraisingName for data in viewFundraisingData"
+                  ng-model="donorDetails.fundraisingDetails" class="form-control">
+                  <option value="">Please Select</option>
+                </select>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Donation Date</label>
+                <input type="date" class="form-control" ng-model="donorDetails.donationDate" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Donation Amount</label>
+                <input type="text" class="form-control" ng-model="donorDetails.donationAmmount" placeholder="" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Target Amount</label>
+                <input type="text" class="form-control" value="{{donorDetails.fundraisingDetails.targetAmmount}}"
+                  id="targetAmmount" placeholder="" readonly>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Current Amount</label>
+                <input type="text" class="form-control" value="{{donorDetails.fundraisingDetails.currentAmmout}}"
+                  id="currentAmmout" placeholder="" readonly>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+          <button type="button" class="border btn btn-primary" ng-click="submitDonationdata()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Volunteers modal -->
+  <div class="modal fade" id="participatelId">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header bg-themecolor">
+          <h4 class="modal-title">Volunteer Details</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="col-md-12 mb-3">
+                <label>Volunteer Name</label>
+                <input type="text" class="form-control" ng-model="volunteersDetails.volunteerName" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Campaign</label>
+                <select id="paymentModeId" ng-options="data.campaignTitle for data in campaignData"
+                  ng-model="volunteersDetails.campaignDetails" class="form-control">
+                  <option value="">Please Select</option>
+                </select>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Contact</label>
+                <input type="text" class="form-control" ng-model="volunteersDetails.contact" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Address</label>
+                <textarea class="form-control" ng-model="volunteersDetails.address" required></textarea>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="validationDefaultUsername">Gender</label>
+                <div class="form-check">
+                  <label class="form-check-label" for="maleId">
+                    <input type="radio" class="form-check-input" ng-model="volunteersDetails.gender" value="Male">Male
+                  </label>
+                </div>
+                <div class="form-check">
+                  <label class="form-check-label" for="femaleId">
+                    <input type="radio" class="form-check-input" ng-model="volunteersDetails.gender" name="genderRadio"
+                      value="Female">Female
+                  </label>
+                </div>
+                <div class="form-check">
+                  <label class="form-check-label" for="otherId">
+                    <input type="radio" class="form-check-input" ng-model="volunteersDetails.gender" name="genderRadio"
+                      value="Other">Other
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+          <button type="button" class="border btn btn-primary" ng-click="submitVolunteersData()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Fundraising modal -->
+  <div class="modal fade" id="referModallId">
+    <div class="modal-dialog" style="max-width: 750px!important;">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header bg-themecolor">
+          <h4 class="modal-title">Fundraise Details</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="col-md-6 mb-3">
+                <label>Fundraise Name</label>
+                <input type="text" ng-model="fundraisingDetails.fundraisingName" class="form-control" placeholder=""
+                  value="" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Target Amount</label>
+                <input type="text" ng-model="fundraisingDetails.targetAmmount" class="form-control" placeholder=""
+                  value="" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Current Amount</label>
+                <input type="text" ng-model="fundraisingDetails.currentAmmout" readonly class="form-control" value=""
+                  placeholder="" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Purpose</label>
+                <textarea ng-model="fundraisingDetails.Purpose" class="form-control"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+          <button type="button" class="border btn btn-primary" ng-click="submitFundraisData()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campaign modal -->
+  <div class="modal fade" id="campaignlId">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header bg-themecolor">
+          <h4 class="modal-title">Campaign Details</h4>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form>
+            <div class="form-row">
+              <div class="col-md-12 mb-3">
+                <label>Campaign Title</label>
+                <input type="text" class="form-control" ng-model="campaignDetails.campaignTitle" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Campaign Date</label>
+                <input type="date" class="form-control" ng-model="campaignDetails.campaignDate" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Sponsorship</label>
+                <input type="text" class="form-control" ng-model="campaignDetails.sponsorship" required>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Location</label>
+                <textarea class="form-control" ng-model="campaignDetails.location" required></textarea>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Campaign Details</label>
+                <textarea class="form-control" ng-model="campaignDetails.campaignDetails" required></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="reset" class="border btn btn-light" data-dismiss="modal">Close</button>
+          <button type="button" class="border btn btn-primary" ng-click="addCampaignData()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
